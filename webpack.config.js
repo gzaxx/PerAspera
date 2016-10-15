@@ -33,5 +33,8 @@ module.exports = {
         alias: {
             'vue$': 'vue/dist/vue.js'
         }
+    },
+    node: {
+        fs: "empty"
     }
 }
