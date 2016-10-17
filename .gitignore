@@ -36,4 +36,4 @@ node_modules
 dist
 
 # Configuration File
-*.cfg
+config.json
