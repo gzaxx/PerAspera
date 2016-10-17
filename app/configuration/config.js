@@ -1,6 +1,6 @@
 const {remote} = require('electron');
 const fs = remote.require('fs');
-const path = './options.cfg'
+const path = './config.json'
 const config = {};
 
 function saveConfig(config) {
