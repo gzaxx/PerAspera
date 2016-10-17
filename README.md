@@ -1,12 +1,9 @@
 # PerAspera
 
 Track overhours and how much additional income can be gained after monthly payment.
-Using Polish Tax rules.
+Polish TAX rules used.
 
-
-### Configuration**
-
-Requires free [firebase](https://www.firebase.com/) NoSQL cloud database.
+Purpose of this app is to see how Electron Atom and VueJS work.
 
 ### TODO
 
