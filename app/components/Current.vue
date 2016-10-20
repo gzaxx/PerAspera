@@ -61,6 +61,7 @@
 <script>
     import monthNames from '../../app/core/months.js'
     import bus from '../../app/core/eventBus.js'
+    import IncomeCalc from '../../app/core/incomeCalc.js'
     import config from '../../app/configuration/config.js'
 
     function getCurrentMonth() {
@@ -85,7 +86,8 @@
         created() {
             this.month = getCurrentMonth().toLowerCase()
             this.settings = config.readConfig()
-            this.rawPayment = Math.round(this.getIncome(0, 0), 2)
+            this.incomeCalc = new IncomeCalc(this.settings)
+            this.rawPayment = Math.round(this.getIncome(0, 0), 2)            
         },
 
         mounted() {          
@@ -96,16 +98,7 @@
                 this.overhours += val
             },
             getIncome(overhours, payments) {            
-                var perHour = Math.round(this.settings.income / this.workDays, 2)
-                var overhoursBonus = (perHour / 8) * overhours
-
-                var incomeTotal = this.settings.income + overhoursBonus
-                incomeTotal = ((incomeTotal - parseFloat(payments)) - this.settings.socialTax) - this.settings.workFund
-
-                incomeTotal = (incomeTotal * 0.18)
-                incomeTotal = incomeTotal - this.settings.healthTax
-
-                return (this.settings.income + overhoursBonus) - (incomeTotal + this.settings.socialTax + this.settings.workFund + 288.95)
+                return this.incomeCalc.calc(this.workDays, overhours, payments)
             },
             calculate() {
                 var overhoursIncome = this.getIncome(this.overhours, this.netPayment)
