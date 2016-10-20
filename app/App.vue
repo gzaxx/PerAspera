@@ -5,11 +5,11 @@
 </template>
 
 <script>
-    import Config from './configuration/Config.vue'
+    import Config from './components/Config.vue'
     import TopMenu from './components/TopMenu.vue'
     import Current from './components/Current.vue'    
     import Welcome from './components/Welcome.vue'        
-    import config from './configuration/config.js'
+    import config from './core/config.js'
     import bus from './core/eventBus.js'
 
     export default {

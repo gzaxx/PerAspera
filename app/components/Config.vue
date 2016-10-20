@@ -40,7 +40,7 @@
 </template>
 
 <script>
-    import config from './config.js'
+    import config from '../../app/core/config.js'
     import bus from '../../app/core/eventBus.js'
 
     var rules = {

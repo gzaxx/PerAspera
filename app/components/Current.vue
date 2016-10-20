@@ -62,7 +62,7 @@
     import monthNames from '../../app/core/months.js'
     import bus from '../../app/core/eventBus.js'
     import IncomeCalc from '../../app/core/incomeCalc.js'
-    import config from '../../app/configuration/config.js'
+    import config from '../../app/core/config.js'
 
     function getCurrentMonth() {
         var d = new Date()
