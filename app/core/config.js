@@ -1,39 +1,38 @@
-const {remote} = require('electron');
-const fs = remote.require('fs');
+const {remote} = require('electron')
+const fs = remote.require('fs-extra')
 const path = './config.json'
-const config = {};
+const config = {}
 
 function saveConfig(config) {
-    var file = fs.openSync(path, 'w+');        
-    return updateConfig(config);
+    var file = fs.openSync(path, 'w+')        
+    return updateConfig(config)
 }
 
 function updateConfig(config) {
-    fs.writeFileSync(path, JSON.stringify(config));        
+    fs.writeFileSync(path, JSON.stringify(config))        
 }
 
 config.configurationExists = () => {
-    return fs.existsSync(path);
+    return fs.existsSync(path)
 }
 
 config.saveConfigFile = (cfg) => {
     try {
 
         if (config.configurationExists()) {
-            updateConfig(cfg);
+            updateConfig(cfg)
         } else {
-            saveConfig(cfg);
+            saveConfig(cfg)
         }
 
     } catch (err) {
-        console.error(err);
-        return false;
+        console.error(err)
+        return false
     }
 }
 
 config.readConfig = () => {
-    var data = fs.readFileSync(path);
-    return JSON.parse(data);
+    return fs.readJsonSync(path)
 }
 
 export default config
