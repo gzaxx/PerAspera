@@ -7,6 +7,7 @@
 
 <script>
     import Config from './components/Config.vue'
+    import History from './components/History.vue'
     import TopMenu from './components/TopMenu.vue'
     import Current from './components/Current.vue'    
     import Welcome from './components/Welcome.vue'        
@@ -18,7 +19,8 @@
             Welcome, 
             Current,
             Config,
-            TopMenu
+            TopMenu,
+            History
         },
         data() {
             return {
@@ -26,7 +28,8 @@
                 views: {
                     'Welcome': Welcome, 
                     'Current': Current,
-                    'Config': Config
+                    'Config': Config,
+                    'History': History
                 },
                 showTopeMenu: false
             }
