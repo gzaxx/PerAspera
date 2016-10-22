@@ -1,5 +1,6 @@
 <template>
     <div id="app">
+        <top-menu v-show="showTopeMenu"></top-menu>
         <component :is="currentView" transition="fade" transition-mode="out-in"></component>
     </div>
 </template>
@@ -16,7 +17,8 @@
         components: {
             Welcome, 
             Current,
-            Config
+            Config,
+            TopMenu
         },
         data() {
             return {
@@ -25,7 +27,8 @@
                     'Welcome': Welcome, 
                     'Current': Current,
                     'Config': Config
-                }
+                },
+                showTopeMenu: false
             }
         },
         mounted() {
@@ -45,6 +48,7 @@
             }, 1000)
 
             bus.on('view-change', this.viewChange)
+            bus.on('toggle-top-menu', this.toggleTopMenu)
         },
         methods: {
             viewChange(name) {
@@ -52,6 +56,9 @@
                 if (view) {
                     this.currentView = view
                 }
+            },
+            toggleTopMenu(visible) {
+                this.showTopeMenu = visible
             }
         }
     }
