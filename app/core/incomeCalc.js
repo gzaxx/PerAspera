@@ -16,6 +16,8 @@ export default class {
         incomeTotal = (incomeTotal * 0.18)
         incomeTotal = incomeTotal - healthTax        
 
-        return (this.settings.income + overhoursBonus) - (incomeTotal + this.settings.socialTax + this.settings.workFund + this.settings.healthTax)
+        return (
+            (this.settings.income + overhoursBonus) - (incomeTotal + this.settings.socialTax + this.settings.workFund + this.settings.healthTax)
+        ).toFixed(2)
     }
 };
