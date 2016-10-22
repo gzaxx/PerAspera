@@ -37,16 +37,10 @@ function loadDataOrCreateNew(month, year) {
     return obj
 }
 
-dataAccess.getCurrent = () => {
-    var d = new Date()
-    return loadDataOrCreateNew(d.getMonth(), d.getFullYear())
-}
+function save(month, year, data, settings) {
+    var p = getFilePath(month, year)
 
-dataAccess.saveCurrent = (data, settings) => {
-    var d = new Date()    
-    var p = getFilePath(d.getMonth(), d.getFullYear())
-
-    if (fs.ensureFileSync(p)) {
+    if (fs.existsSync(p)) {
         fs.removeSync(p)
     }
     
@@ -54,7 +48,32 @@ dataAccess.saveCurrent = (data, settings) => {
     saveObj.data = data
     saveObj.settings = settings
 
-    fs.writeJsonSync(p, saveObj)
+    fs.writeJsonSync(p, saveObj)  
+}
+
+dataAccess.getCurrent = () => {
+    var d = new Date()
+    return loadDataOrCreateNew(d.getMonth(), d.getFullYear())
+}
+
+dataAccess.saveCurrent = (data, settings) => {
+    var d = new Date()
+    save(d.getMonth(), d.getFullYear(), data, settings)
+}
+
+dataAccess.save = (month, year, data, settings) => {        
+    save(month, year, data, settings)
+}
+
+dataAccess.hasMonthDataInYear = (year) => {
+    var data = []
+
+    for (var i = 0; i < 12; i++) {
+        var p = getFilePath(i, year)
+        data[i] = fs.existsSync(p)
+    }
+
+    return data
 }
 
 export default dataAccess
