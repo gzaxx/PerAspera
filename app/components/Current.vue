@@ -7,7 +7,7 @@
                         <div class="field">
                             <label>Work days in {{ month }}</label>
                             <div class="ui left icon input">
-                                <input name="workDays" placeholder="22" type="text" v-model.number="workDays">
+                                <input name="workDays" placeholder="22" type="text" v-model.number="data.workDays">
                                 <i class="calendar icon"></i>
                             </div>
                         </div>
@@ -17,8 +17,8 @@
                         <div class="field">
                             <label>Overhours</label>
                             <div class="ui left icon disabled input">
-                                <input name="overhours" placeholder="1000 PLN" type="text" v-model.number="overhours">
-                                <i class="money icon"></i>
+                                <input name="overhours" placeholder="1000 PLN" type="text" v-model.number="data.overhours">
+                                <i class="clock icon"></i>
                             </div>
                         </div>
 
@@ -30,12 +30,17 @@
                         <div class="field">
                             <label>Net payments</label>
                             <div class="ui left icon input">
-                                <input name="netPayments" placeholder="1000 PLN" type="text"  v-model.number="netPayment">
+                                <input name="netPayments" placeholder="1000 PLN" type="text"  v-model.number="data.netPayment">
                                 <i class="dollar icon"></i>
                             </div>
                         </div>
                     </p>                    
                 </div>
+
+                <div class="ui blue submit button" @click='save()'>save</div>
+                <div class="ui blue submit button" @click='toggleConfig(true)' v-show="!showConfig">settings</div>
+
+                <config :isLocal="true" :savedSettings="settings" v-show="showConfig"></config>
             </div>
 
             <div class="ui vertical divider">
@@ -44,13 +49,19 @@
 
             <div class="center aligned column">
                 <h3>
-                    {{ rawPayment }}
+                    {{ getCurrency(rawPayment) }}
+                    <br />
+                    <small>base</small>
                 </h3>
                 <h2>
-                    {{ result }}
+                    {{ getCurrency(result) }}
+                    <br />
+                    <small>overhours</small>
                 </h2>
                 <h3>
-                    {{ newIncome }}
+                    {{ getCurrency(newIncome) }}
+                    <br />
+                    <small>total</small>
                 </h3>
             </div>
         </div>
@@ -59,10 +70,11 @@
 </template>
 
 <script>
+    import Config from './Config.vue'
     import monthNames from '../../app/core/months.js'
+    import dataAccess from '../../app/core/dataAccess.js'
     import bus from '../../app/core/eventBus.js'
-    import IncomeCalc from '../../app/core/incomeCalc.js'
-    import config from '../../app/core/config.js'
+    import IncomeCalc from '../../app/core/incomeCalc.js'    
 
     function getCurrentMonth() {
         var d = new Date()
@@ -70,64 +82,85 @@
     }
 
     export default {
+        components: {
+            Config
+        },
         data() {
             return {
+                data: {
+                },
+                
+                showConfig: false,
                 month: '',
-                workDays: 22,
                 result: 0,
-                netPayment: 0,
-                overhours: 0,
-                settings: {},
                 rawPayment: 0,
-                newIncome: 0
+                newIncome: 0,
+                
+                settings: {}                            
             }
         },
 
         created() {
             this.month = getCurrentMonth().toLowerCase()
-            this.settings = config.readConfig()
+            
+            var obj = dataAccess.getCurrent()
+            this.data = obj.data
+            this.settings = obj.settings
             this.incomeCalc = new IncomeCalc(this.settings)
-            this.rawPayment = Math.round(this.getIncome(0, 0), 2)            
+            this.rawPayment = this.getIncome(0, this.data.netPayment)            
+
+            bus.on('settings-closed', this.hideSettings)
+            bus.on('settings-saved', this.setSettings)
+
+            bus.emit('toggle-top-menu', true)
         },
 
         mounted() {          
             
         },
         methods: {
+            toggleConfig(visible) {
+                this.showConfig = visible
+            },
             increase(val) {
-                this.overhours += val
+                this.data.overhours += val
             },
             getIncome(overhours, payments) {            
-                return this.incomeCalc.calc(this.workDays, overhours, payments)
+                return this.incomeCalc.calc(this.data.workDays, overhours, payments)
+            },
+            recalculate() {
+                this.rawPayment = this.getIncome(0, this.data.netPayment)
+                this.calculate()
             },
             calculate() {
-                var overhoursIncome = this.getIncome(this.overhours, this.netPayment)
-                this.result = Math.abs(Math.round(overhoursIncome - this.rawPayment, 2))
-                this.newIncome = Math.round(overhoursIncome, 2)
+                var overhoursIncome = this.getIncome(this.data.overhours, this.data.netPayment)
+                this.result = (overhoursIncome - this.rawPayment).toFixed(2)
+                this.newIncome = overhoursIncome
+            },
+            hideSettings() {
+                this.showConfig = false
+            },
+            setSettings(settings) {
+                this.settings = settings
+                this.incomeCalc = new IncomeCalc(this.settings)
+                this.recalculate()
+            },
+            save() {
+                dataAccess.saveCurrent(this.data, this.settings)
+            },
+            getCurrency(val) {
+                return val + " zł"
             }
         },
         watch: {
-            overhours: function () {
+            'data.overhours': function () {
                 this.calculate()
             },
-            netPayment: function () {
-                this.rawPayment = Math.round(this.getIncome(0, this.netPayment), 2)
-                this.calculate()
+            'data.netPayment': function () {
+                this.recalculate()
             },
-            workDays: function() {
-                this.rawPayment = this.getIncome(0, this.netPayment)
-                this.calculate()
-            }
-        },
-        filters: {
-            currency: {
-                read: function (value) {
-                    return value.toFixed(2) + "zł"
-                },
-                write: function (value) {
-                    var number = +value.replace(/[^\d.]/g, '')
-                    return isNaN(number) ? 0 : number
-                }
+            'data.workDays': function () {
+                this.recalculate()
             }
         }
     }
