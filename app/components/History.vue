@@ -2,11 +2,37 @@
     <div class="ui container">
         <div class="ui horizontal divider">HISTORY</div>
 
-        <div class="ui horizontal list">
-            <div v-for="m in months" class="item">
-                <div class="content">
-                    <div class="header">{{ m.name }}</div>
-                    {{ m.hasData }}
+        <div class="ui borderless menu">
+            <a class="item" v-bind:class="{ active: isActiveYear(y) }" v-for="y in years" @click="showYear(y)">{{ y }}</a>            
+        </div>
+
+        <div class="ui cards">
+            <div class="card" v-for="m in months">
+                <div class="content">                
+                    <div class="header">
+                        {{ m.name }}
+                    </div>
+                    <div class="meta">
+                    
+                    </div>
+                    <div class="description">
+                        <div class="ui success message" v-if="m.hasData">    
+                            <div class="header">
+                                Great success
+                            </div>
+                            <p>Bonus income</p>
+                        </div> 
+
+                        <div class="ui negative message"  v-if="!m.hasData">                        
+                            <div class="header">
+                                Greate fail
+                            </div>
+                            <p>No bonus</p>
+                        </div>                              
+                    </div>
+                </div>
+                <div class="extra content">
+                    <button class="ui pink basic button" @click="showDetails(m.month)">Show</button>                    
                 </div>
             </div>
         </div>
@@ -25,6 +51,7 @@
 
         for (var i = 0, len = months.length; i < len; i++) {
             data[i] = {}
+            data[i].month = i
             data[i].name = months[i]
             data[i].hasData = fileData[i]
         }
@@ -34,13 +61,29 @@
 
     export default {
         data() {
-            return {
+            return {                
                 year: 2016,
-                months: []
+                months: [],
+                years: [
+                    2016,
+                    2017
+                ]
             }
-        },
+        },        
         created() {
             this.months = createData(this.year)
+        },
+        methods: {
+            showYear(year) {   
+                this.year = year             
+                this.months = createData(year)
+            },
+            isActiveYear: function (year) {
+                return this.year === year
+            },
+            showDetails: function (month) {
+
+            }
         }
     }
 </script>
