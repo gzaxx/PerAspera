@@ -9,8 +9,12 @@ function folderExists () {
     fs.mkdirsSync(dir)
 }
 
+function getDirectory(year) {
+    return dir  + '/' + year
+}
+
 function getFilePath(month, year) {
-    return dir  + '/' + year + '/' + month + '.json'
+    return getDirectory(year) + '/' + month + '.json'
 }
 
 function loadDataOrCreateNew(month, year) {
@@ -39,6 +43,9 @@ function loadDataOrCreateNew(month, year) {
 
 function save(month, year, data, settings) {
     var p = getFilePath(month, year)
+    var dict = getDirectory(year)
+
+    fs.ensureDirSync(dict)
 
     if (fs.existsSync(p)) {
         fs.removeSync(p)
