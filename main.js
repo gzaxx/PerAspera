@@ -7,6 +7,7 @@ let mainWindow;
 function createWindow() {
     mainWindow = new BrowserWindow({ width: 1200, height: 600 });
     mainWindow.loadURL('file://' + __dirname + '/index.html');
+//    mainWindow.setMenu(null);
 
     mainWindow.on('closed', function() {
         mainWindow = null;

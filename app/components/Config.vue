@@ -5,15 +5,8 @@
             <div class="ui horizontal divider">INCOME</div>
 
             <div class="field">            
-                <label for="income">Monthly income</label>
+                <label for="income">Monthly income (without VAT)</label>
                 <input id="income" placeholder="2100.00 PLN" v-model.number="settings.income" type="text" >
-            </div>
-
-            <div class="field">
-                <div class="ui toggle checkbox">
-                    <input type="checkbox" v-model="settings.incomeTaxIncluded" >
-                    <label>TAX included</label>
-                </div>
             </div>
 
             <div class="ui horizontal divider">TAXES</div>
@@ -119,10 +112,10 @@
                 cssDisabled: '',
                 settings: {
                     income: 0,
-                    incomeTaxIncluded: false,
                     socialTax: 0,
                     healthTax: 0,
-                    workFund: 0
+                    workFund: 0,
+                    vat: 0
                 }
             }
         },
@@ -133,7 +126,7 @@
             }
             else {                        
                 if (config.configurationExists()) {
-                    this.settings = config.readConfig();                          
+                    this.settings = config.readConfig()                    
                 } else {
                     this.cssDisabled = 'disabled'
                 }     

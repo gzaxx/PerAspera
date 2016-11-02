@@ -30,7 +30,7 @@ function loadDataOrCreateNew(month, year) {
         obj.data = {        
             workDays: 22,
             netPayment: 0,
-            overhours: 0
+            overhours: 0            
         }         
     }
 
